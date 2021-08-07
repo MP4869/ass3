@@ -28,6 +28,7 @@ string isOK(const T& got, const T& expected) {
     } else {
         cout << "    Got   " << got << "\n expected " << expected << endl;
         cout << "Hello";
+        cout << "Hello";
         return "ERR: ";
     }
 }
