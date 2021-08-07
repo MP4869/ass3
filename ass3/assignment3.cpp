@@ -29,6 +29,8 @@ string isOK(const T& got, const T& expected) {
         cout << "    Got   " << got << "\n expected " << expected << endl;
         return "ERR: ";
     }
+
+    cout << "Hello";
 }
 
 // visitor function - print out the vertex label
