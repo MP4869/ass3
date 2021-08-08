@@ -38,19 +38,25 @@ bool Vertex::isVisited() const { return this->visited; }
     Cannot have multiple connections to the same endVertex
     Cannot connect back to itself
  @return  True if the connection is successful. */
-bool Vertex::connect(const std::string& endVertex, const int edgeWeight) { 
-    if (endVertex == this->vertexLabel)
+bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
+
+    // map.find iterates over the key in the adjacency list
+    std::map<std::string, Edge, std::less<std::string>>::iterator 
+        it = adjacencyList.find(endVertex);
+
+    // If we find the value then we will not reach map.end(). If we do,
+    // this means that the edge is already here therefore return false
+    // Check if the labels are the same as well
+    if (endVertex == this->vertexLabel || it != adjacencyList.end())
     {
         return false;
     }
-  
-    if (this->adjacencyList.find(endVertex))
-    {
-        return false;
-    }
+
+    // Create new edge
     Edge* temp = new Edge(endVertex, edgeWeight);
-    this->adjacencyList.insert(endVertex, *temp);
-    return true; }
+    this->adjacencyList.insert({vertexLabel, *temp});
+    return true; 
+}
 
 /** Removes the edge between this vertex and the given one.
 @return  True if the removal is successful. */
@@ -59,23 +65,36 @@ bool Vertex::disconnect(const std::string& endVertex) {return true; }
 /** Gets the weight of the edge between this vertex and the given vertex.
  @return  The edge weight. This value is zero for an unweighted graph and
     is negative if the .edge does not exist */
-int Vertex::getEdgeWeight(const std::string& endVertex) const { return 0; }
+int Vertex::getEdgeWeight(const std::string& endVertex) const { 
+
+    // map.find iterates over the key in the adjacency list
+    auto it = adjacencyList.find(endVertex);
+    if (it != adjacencyList.end()) {
+        // Return the weight of the edge
+        return adjacencyList.find(endVertex)->second.getWeight();
+    }
+
+    // Edge does not exist
+    return -1;
+
+}
 
 /** Calculates how many neighbors this vertex has.
  @return  The number of the vertex's neighbors. */
 int Vertex::getNumberOfNeighbors() const { return adjacencyList.size(); }
 
 /** Sets current neighbor to first in adjacency list. */
-void Vertex::resetNeighbor() {}
+void Vertex::resetNeighbor() {
+    currentNeighbor = adjacencyList.begin();
+}
 
 /** Gets this vertex's next neighbor in the adjacency list.
     Neighbors are automatically sorted alphabetically via map
     Returns the vertex label if there are no more neighbors
  @return  The label of the vertex's next neighbor. */
 std::string Vertex::getNextNeighbor() {
-    adjacencyList.find
-    return "XXX"; }
-
+    return adjacencyList.find(vertexLabel)->second.getEndVertex();
+}
 /** Sees whether this vertex is equal to another one.
     Two vertices are equal if they have the same label. */
 bool Vertex::operator==(const Vertex& rightHandItem) const { 
