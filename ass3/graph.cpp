@@ -106,10 +106,39 @@ void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
                                         void visit(const std::string&)) {}
 
 /** mark all verticies as unvisited */
-void Graph::unvisitVertices() {}
+void Graph::unvisitVertices() {
+
+    //.second refers to the vertex pointer
+    for (const auto& item: vertices) {
+        item.second->unvisit();
+    }
+}
 
 /** find a vertex, if it does not exist return nullptr */
-Vertex* Graph::findVertex(const std::string& vertexLabel) const { return nullptr; }
+Vertex* Graph::findVertex(const std::string& vertexLabel) const {
+
+    auto it = vertices.find(vertexLabel);
+
+    // Found vertex
+    if (it != vertices.end()) {
+        // it->second returns the pointer for the vertex
+        return it->second;
+    }
+
+    return nullptr;
+}
 
 /** find a vertex, if it does not exist create it and return it */
-Vertex* Graph::findOrCreateVertex(const std::string& vertexLabel) { return nullptr; }
+Vertex* Graph::findOrCreateVertex(const std::string& vertexLabel) { 
+    auto it = vertices.find(vertexLabel);
+
+    // Found vertex
+    if (it != vertices.end()) {
+        // it->second returns the pointer for the vertex
+        return it->second;
+    }
+
+    // Create new vertex and return it
+    Vertex* v = new Vertex(vertexLabel);
+    return v;
+}

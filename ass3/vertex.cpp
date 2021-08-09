@@ -40,15 +40,14 @@ bool Vertex::isVisited() const { return this->visited; }
  @return  True if the connection is successful. */
 bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
 
-    // map.find iterates over the key in the adjacency list
+    // Find the current vertex
     std::map<std::string, Edge, std::less<std::string>>::iterator 
-        it = adjacencyList.find(endVertex);
+        currentVertex = adjacencyList.find(vertexLabel);
 
-    // If we find the value then we will not reach map.end(). If we do,
-    // this means that the edge is already here therefore return false
-    // Check if the labels are the same as well
-    if (endVertex == this->vertexLabel || it != adjacencyList.end())
-    {
+    // If the labels are the same or the current vertex's edge end vertex
+    // is the same as the end vertex, it means it's already connected
+    if (endVertex == this->vertexLabel || currentVertex->second.getEndVertex()
+        == endVertex){
         return false;
     }
 
@@ -79,10 +78,17 @@ bool Vertex::disconnect(const std::string& endVertex) {
 int Vertex::getEdgeWeight(const std::string& endVertex) const { 
 
     // map.find iterates over the key in the adjacency list
-    auto it = adjacencyList.find(endVertex);
+    auto it = adjacencyList.find(vertexLabel);
+
+    // Found the vertex
     if (it != adjacencyList.end()) {
-        // Return the weight of the edge
-        return adjacencyList.find(endVertex)->second.getWeight();
+
+        // Check if it's connected to the end vertex
+        if (it->second.getEndVertex() == endVertex) {
+
+            // It is connected therefore return the weight of the edge
+            return it->second.getWeight();
+        }
     }
 
     // Edge does not exist
@@ -106,6 +112,7 @@ void Vertex::resetNeighbor() {
 std::string Vertex::getNextNeighbor() {
     return adjacencyList.find(vertexLabel)->second.getEndVertex();
 }
+
 /** Sees whether this vertex is equal to another one.
     Two vertices are equal if they have the same label. */
 bool Vertex::operator==(const Vertex& rightHandItem) const { 
