@@ -60,7 +60,18 @@ bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
 
 /** Removes the edge between this vertex and the given one.
 @return  True if the removal is successful. */
-bool Vertex::disconnect(const std::string& endVertex) {return true; }
+bool Vertex::disconnect(const std::string& endVertex) {
+    auto it = adjacencyList.find(endVertex);
+
+    // Found the item
+    if (it != adjacencyList.end()) {
+        adjacencyList.erase(endVertex);
+        return true;
+    }
+    
+    // Didn't find item
+    return false;
+}
 
 /** Gets the weight of the edge between this vertex and the given vertex.
  @return  The edge weight. This value is zero for an unweighted graph and

@@ -29,7 +29,7 @@ Graph::~Graph() {}
 /** return number of vertices */
 int Graph::getNumVertices() const { return 0; }
 
-/** return number of vertices */
+/** return number of edges */
 int Graph::getNumEdges() const { return 0; }
 
 /** add a new edge between start and end vertex
@@ -37,7 +37,11 @@ int Graph::getNumEdges() const { return 0; }
     calls Vertex::connect
     a vertex cannot connect to itself
     or have multiple edges to another vertex */
-bool Graph::add(std::string start, std::string end, int edgeWeight) { return true; }
+bool Graph::add(std::string start, std::string end, int edgeWeight) { 
+    std::cout << start + " " + end + " " + std::to_string(edgeWeight) << 
+        std::endl;
+    return true;
+}
 
 /** return weight of the edge between start and end
     returns INT_MAX if not connected or vertices don't exist */
@@ -47,7 +51,26 @@ int Graph::getEdgeWeight(std::string start, std::string end) const { return 0; }
     the first line of the file is an integer, indicating number of edges
     each edge line is in the form of "string string int"
     fromVertex  toVertex    edgeWeight */
-void Graph::readFile(std::string filename) {}
+void Graph::readFile(std::string filename) {
+    std::ifstream infile(filename);
+    if (!infile) {
+        std::cout << "File could not be opened" << std::endl;
+        return;
+    }
+
+    std::string start, end;
+    int edgeWeight;
+
+    infile >> numberOfVertices;
+
+    for (;;) {
+
+        infile >> start >> end >> edgeWeight;
+        add(start, end, edgeWeight);
+
+        if (infile.eof()) break;
+    }
+}
 
 /** depth-first traversal starting from startLabel
     call the function visit on each vertex label */
