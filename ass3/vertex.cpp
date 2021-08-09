@@ -44,7 +44,7 @@ bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
     std::map<std::string, Edge, std::less<std::string>>::iterator 
         currentVertex = adjacencyList.find(vertexLabel);
 
-    // If the labels are the same or the current vertex's edge end vertex
+    // If the labels are the same or if the current vertex's edge end vertex
     // is the same as the end vertex, it means it's already connected
     if (endVertex == this->vertexLabel || currentVertex->second.getEndVertex()
         == endVertex){
