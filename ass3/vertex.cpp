@@ -110,7 +110,9 @@ void Vertex::resetNeighbor() {
     Returns the vertex label if there are no more neighbors
  @return  The label of the vertex's next neighbor. */
 std::string Vertex::getNextNeighbor() {
-    return adjacencyList.find(vertexLabel)->second.getEndVertex();
+    currentNeighbor = adjacencyList.find(vertexLabel);
+    ++currentNeighbor;
+    return currentNeighbor->first;
 }
 
 /** Sees whether this vertex is equal to another one.
