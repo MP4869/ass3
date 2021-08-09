@@ -61,10 +61,11 @@ void Graph::readFile(std::string filename) {
     std::string start, end;
     int edgeWeight;
 
-    infile >> numberOfVertices;
+    infile >> numberOfEdges;
 
     for (;;) {
 
+        // Grab start vertex, end vertex, weight of the edge
         infile >> start >> end >> edgeWeight;
         add(start, end, edgeWeight);
 
