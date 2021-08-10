@@ -24,13 +24,19 @@ Graph::Graph() {}
 /** destructor, delete all vertices and edges
     only vertices stored in map
     no pointers to edges created by graph */
-Graph::~Graph() {}
+Graph::~Graph() { 
+    std::map<std::string, Vertex*>::iterator it;
+    for (it = vertices.begin(); it != vertices.end(); it++)
+    {
+        delete it->second;
+    }
+}
 
 /** return number of vertices */
-int Graph::getNumVertices() const { return 0; }
+int Graph::getNumVertices() const { return this->numberOfVertices; }
 
 /** return number of edges */
-int Graph::getNumEdges() const { return 0; }
+int Graph::getNumEdges() const { return this->numberOfEdges; }
 
 /** add a new edge between start and end vertex
     if the vertices do not exist, create them
@@ -40,12 +46,23 @@ int Graph::getNumEdges() const { return 0; }
 bool Graph::add(std::string start, std::string end, int edgeWeight) { 
     std::cout << start + " " + end + " " + std::to_string(edgeWeight) << 
         std::endl;
-    return true;
-}
+    auto it = vertices.find(start);
+
+    if (it->second->connect(end, edgeWeight))
+    {
+        return true;
+    }
+    return false;
+    }
+    
+
 
 /** return weight of the edge between start and end
     returns INT_MAX if not connected or vertices don't exist */
-int Graph::getEdgeWeight(std::string start, std::string end) const { return 0; }
+int Graph::getEdgeWeight(std::string start, std::string end) const { 
+    
+    auto it = vertices.find(start);
+    return it->second->getEdgeWeight(end); }
 
 /** read edges from file
     the first line of the file is an integer, indicating number of edges
@@ -67,8 +84,21 @@ void Graph::readFile(std::string filename) {
 
         // Grab start vertex, end vertex, weight of the edge
         infile >> start >> end >> edgeWeight;
+        if (vertices.count(start)<1)
+        {
+            Vertex* temp = new Vertex(start);
+            vertices.insert({ start, temp });
+            numberOfVertices++;
+        }
+        if (vertices.count(end) <1)
+        {
+            Vertex* temp = new Vertex(end);
+            vertices.insert({end,temp });
+            numberOfVertices++;
+        }
         add(start, end, edgeWeight);
-
+        Vertex* temp = new Vertex(start);
+     
         if (infile.eof()) break;
     }
 }
