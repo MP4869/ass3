@@ -49,8 +49,8 @@ bool Graph::add(std::string start, std::string end, int edgeWeight) {
     std::cout << start + " " + end + " " + std::to_string(edgeWeight) <<
         std::endl;
     auto it = vertices.find(start);
-
-    if (it->second->connect(end, edgeWeight))
+    
+    if (it == vertices.end() ||it->second->connect(end, edgeWeight))
     {
         if (vertices.count(end) < 1)
         {
@@ -94,7 +94,7 @@ void Graph::readFile(std::string filename) {
         infile >> start >> end >> edgeWeight;
      
         add(start, end, edgeWeight);
-        Vertex* temp = new Vertex(start);
+        
      
         if (infile.eof()) break;
     }
