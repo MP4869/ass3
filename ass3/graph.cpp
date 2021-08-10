@@ -25,10 +25,12 @@ Graph::Graph() {}
     only vertices stored in map
     no pointers to edges created by graph */
 Graph::~Graph() { 
+    
     std::map<std::string, Vertex*>::iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++)
     {
         delete it->second;
+        it->second = nullptr;
     }
 }
 
@@ -43,17 +45,23 @@ int Graph::getNumEdges() const { return this->numberOfEdges; }
     calls Vertex::connect
     a vertex cannot connect to itself
     or have multiple edges to another vertex */
-bool Graph::add(std::string start, std::string end, int edgeWeight) { 
-    std::cout << start + " " + end + " " + std::to_string(edgeWeight) << 
+bool Graph::add(std::string start, std::string end, int edgeWeight) {
+    std::cout << start + " " + end + " " + std::to_string(edgeWeight) <<
         std::endl;
     auto it = vertices.find(start);
 
     if (it->second->connect(end, edgeWeight))
     {
+        if (vertices.count(end) < 1)
+        {
+            Vertex* temp = new Vertex(end);
+            vertices.insert({ end,temp });
+            numberOfVertices++;
+        }
         return true;
     }
     return false;
-    }
+}
     
 
 
@@ -84,18 +92,7 @@ void Graph::readFile(std::string filename) {
 
         // Grab start vertex, end vertex, weight of the edge
         infile >> start >> end >> edgeWeight;
-        if (vertices.count(start)<1)
-        {
-            Vertex* temp = new Vertex(start);
-            vertices.insert({ start, temp });
-            numberOfVertices++;
-        }
-        if (vertices.count(end) <1)
-        {
-            Vertex* temp = new Vertex(end);
-            vertices.insert({end,temp });
-            numberOfVertices++;
-        }
+     
         add(start, end, edgeWeight);
         Vertex* temp = new Vertex(start);
      
@@ -154,7 +151,6 @@ Vertex* Graph::findVertex(const std::string& vertexLabel) const {
         // it->second returns the pointer for the vertex
         return it->second;
     }
-
     return nullptr;
 }
 
