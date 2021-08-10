@@ -161,6 +161,7 @@ Vertex* Graph::findVertex(const std::string& vertexLabel) const {
 /** find a vertex, if it does not exist create it and return it */
 Vertex* Graph::findOrCreateVertex(const std::string& vertexLabel) { 
     auto it = vertices.find(vertexLabel);
+    //abc
 
     // Found vertex
     if (it != vertices.end()) {
