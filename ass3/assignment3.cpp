@@ -30,6 +30,8 @@ string isOK(const T& got, const T& expected) {
         cout << "Hello";
         return "ERR: ";
     }
+    cout << "HI";
+    cout << "Hello";
 }
 
 // visitor function - print out the vertex label
