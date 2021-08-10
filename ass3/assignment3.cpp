@@ -27,6 +27,7 @@ string isOK(const T& got, const T& expected) {
         return "OK: ";
     } else {
         cout << "    Got   " << got << "\n expected " << expected << endl;
+        cout << "Hello";
         return "ERR: ";
     }
     cout << "HI";
@@ -185,7 +186,7 @@ void testGraph2() {
 
 int main() {
     testGraph0();
-    testGraph1();
-    testGraph2();
+    //testGraph1();
+    //testGraph2();
     return 0;
 }
