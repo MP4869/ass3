@@ -4,7 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-
+#include <list>
 #include "graph.h"
 
 /**
@@ -108,7 +108,10 @@ void Graph::depthFirstTraversal(std::string startLabel,
 /** breadth-first traversal starting from startLabel
     call the function visit on each vertex label */
 void Graph::breadthFirstTraversal(std::string startLabel,
-                                  void visit(const std::string&)) {}
+    void visit(const std::string&)) {
+    Vertex* temp = vertices.at(startLabel);
+    breadthFirstTraversalHelper(temp,  visit);
+}
 
 /** find the lowest cost from startLabel to all vertices that can be reached
     using Djikstra's shortest-path algorithm
@@ -130,7 +133,41 @@ void Graph::depthFirstTraversalHelper(Vertex* startVertex,
 
 /** helper for breadthFirstTraversal */
 void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
-                                        void visit(const std::string&)) {}
+                                        void visit(const std::string&)) {
+    std::list<Vertex*> queue;
+
+    // Mark the current node as visited and enqueue it
+    startVertex->visit();
+    queue.push_back(startVertex);
+
+ 
+
+    while (!queue.empty())
+    {
+        // Dequeue a vertex from queue and print it
+        Vertex*temp = queue.front();
+        std::cout << temp << " ";
+        queue.pop_front();
+
+        // Get all adjacent vertices of the dequeued
+        // vertex s. If a adjacent has not been visited,
+        // then mark it visited and enqueue it
+      while(true)
+        {
+          std::string insert = temp->getNextNeighbor();
+          if (insert.compare(temp->getLabel())==0)
+          {
+              break;
+          }
+          Vertex* temp = vertices.at(insert);
+            if (!temp->isVisited())
+            {
+                temp->visit();
+                queue.push_back(temp);
+            }
+        }
+    }
+}
 
 /** mark all verticies as unvisited */
 void Graph::unvisitVertices() {
