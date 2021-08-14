@@ -79,6 +79,8 @@ class Vertex {
     /** True if the vertex is visited */
     bool visited {false};
 
+    int iterations = 0;
+
     /** adjacencyList as an ordered map, in alphabetical order */
     std::map<std::string, Edge, std::less<std::string>> adjacencyList;
 
