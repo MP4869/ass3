@@ -103,7 +103,10 @@ void Graph::readFile(std::string filename) {
 /** depth-first traversal starting from startLabel
     call the function visit on each vertex label */
 void Graph::depthFirstTraversal(std::string startLabel,
-                                void visit(const std::string&)) {}
+                                void visit(const std::string&)) {
+    Vertex* temp = vertices.at(startLabel);
+    depthFirstTraversalHelper(temp, visit);
+}
 
 /** breadth-first traversal starting from startLabel
     call the function visit on each vertex label */
@@ -129,7 +132,26 @@ void Graph::djikstraCostToAllVertices(
 
 /** helper for depthFirstTraversal */
 void Graph::depthFirstTraversalHelper(Vertex* startVertex,
-                                      void visit(const std::string&)) {}
+                                      void visit(const std::string&)) {
+    std::cout << startVertex->getLabel() << " ";
+    startVertex->visit();
+    // Recur for all the vertices adjacent
+    // to this vertex
+    while (true)
+    {
+        std::string insert = startVertex->getNextNeighbor();
+        if (insert.compare(startVertex->getLabel()) == 0)
+        {
+            break;
+        }
+        Vertex* temp = vertices.at(insert);
+        if (!temp->isVisited())
+        {
+            depthFirstTraversalHelper(temp, visit);
+        }  
+    }
+  
+}
 
 /** helper for breadthFirstTraversal */
 void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
