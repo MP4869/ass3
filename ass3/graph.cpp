@@ -64,6 +64,9 @@ bool Graph::add(std::string start, std::string end, int edgeWeight) {
             vertices.insert({ start,temp });
             numberOfVertices++;
         }
+        it = vertices.find(start);
+        it->second->connect(end, edgeWeight);
+
         return true;
     }
     return false;

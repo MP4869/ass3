@@ -53,7 +53,7 @@ bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
 
     // Create new edge
     Edge* temp = new Edge(endVertex, edgeWeight);
-    this->adjacencyList.insert({vertexLabel, *temp});
+    this->adjacencyList.insert({endVertex, *temp});
     return true; 
 }
 

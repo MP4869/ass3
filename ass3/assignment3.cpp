@@ -186,7 +186,7 @@ void testGraph2() {
 
 int main() {
     testGraph0();
-    //testGraph1();
-    //testGraph2();
+    testGraph1();
+    testGraph2();
     return 0;
 }
