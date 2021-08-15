@@ -58,6 +58,12 @@ bool Graph::add(std::string start, std::string end, int edgeWeight) {
             vertices.insert({ end,temp });
             numberOfVertices++;
         }
+        if (vertices.count(start) < 1)
+        {
+            Vertex* temp = new Vertex(start);
+            vertices.insert({ start,temp });
+            numberOfVertices++;
+        }
         return true;
     }
     return false;
@@ -106,6 +112,7 @@ void Graph::depthFirstTraversal(std::string startLabel,
                                 void visit(const std::string&)) {
     Vertex* temp = vertices.at(startLabel);
     depthFirstTraversalHelper(temp, visit);
+    unvisitVertices();
 }
 
 /** breadth-first traversal starting from startLabel
@@ -114,6 +121,7 @@ void Graph::breadthFirstTraversal(std::string startLabel,
     void visit(const std::string&)) {
     Vertex* temp = vertices.at(startLabel);
     breadthFirstTraversalHelper(temp,  visit);
+    unvisitVertices();
 }
 
 /** find the lowest cost from startLabel to all vertices that can be reached
@@ -133,8 +141,8 @@ void Graph::djikstraCostToAllVertices(
 /** helper for depthFirstTraversal */
 void Graph::depthFirstTraversalHelper(Vertex* startVertex,
                                       void visit(const std::string&)) {
-    std::cout << startVertex->getLabel() << " ";
     startVertex->visit();
+    visit(startVertex->getLabel());
     // Recur for all the vertices adjacent
     // to this vertex
     while (true)
@@ -157,9 +165,9 @@ void Graph::depthFirstTraversalHelper(Vertex* startVertex,
 void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
                                         void visit(const std::string&)) {
     std::list<Vertex*> queue;
-
     // Mark the current node as visited and enqueue it
     startVertex->visit();
+    visit(startVertex->getLabel());
     queue.push_back(startVertex);
 
  
@@ -185,6 +193,7 @@ void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
             if (!temp->isVisited())
             {
                 temp->visit();
+                visit(temp->getLabel());
                 queue.push_back(temp);
             }
         }
@@ -197,8 +206,11 @@ void Graph::unvisitVertices() {
     //.second refers to the vertex pointer
     for (const auto& item: vertices) {
         item.second->unvisit();
+        item.second->setIterations();
     }
 }
+
+
 
 /** find a vertex, if it does not exist return nullptr */
 Vertex* Graph::findVertex(const std::string& vertexLabel) const {

@@ -72,6 +72,8 @@ class Vertex {
         Compares vertexLabel. */
     bool operator<(const Vertex& rightHandItem) const;
 
+    void setIterations();
+
  private:
     /** the unique label for the vertex */
     std::string vertexLabel;

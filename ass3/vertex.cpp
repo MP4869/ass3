@@ -115,12 +115,18 @@ std::string Vertex::getNextNeighbor() {
         if (c == iterations)
         {
             iterations++;
-            return currentNeighbor->first;
+            return currentNeighbor->second.getEndVertex();
         }
             c++;
     }
+    iterations = 0;
     return this->vertexLabel;
    
+}
+
+void Vertex::setIterations()
+{
+    iterations = 0;
 }
 
 /** Sees whether this vertex is equal to another one.
