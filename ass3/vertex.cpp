@@ -46,7 +46,8 @@ bool Vertex::connect(const std::string& endVertex, const int edgeWeight) {
 
     // If the labels are the same or if the current vertex's edge end vertex
     // is the same as the end vertex, it means it's already connected
-    if (endVertex == this->vertexLabel ||( currentVertex != adjacencyList.end() &&currentVertex->second.getEndVertex()
+    if (endVertex == this->vertexLabel ||( currentVertex != adjacencyList.end() 
+        &&currentVertex->second.getEndVertex()
 == endVertex)){
         return false;
     }

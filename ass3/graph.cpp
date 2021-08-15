@@ -104,6 +104,7 @@ void Graph::readFile(std::string filename) {
     call the function visit on each vertex label */
 void Graph::depthFirstTraversal(std::string startLabel,
                                 void visit(const std::string&)) {
+    unvisitVertices();
     Vertex* temp = vertices.at(startLabel);
     depthFirstTraversalHelper(temp, visit);
 }
@@ -112,6 +113,7 @@ void Graph::depthFirstTraversal(std::string startLabel,
     call the function visit on each vertex label */
 void Graph::breadthFirstTraversal(std::string startLabel,
     void visit(const std::string&)) {
+    unvisitVertices();
     Vertex* temp = vertices.at(startLabel);
     breadthFirstTraversalHelper(temp,  visit);
 }
@@ -128,7 +130,54 @@ void Graph::breadthFirstTraversal(std::string startLabel,
 void Graph::djikstraCostToAllVertices(
     std::string startLabel,
     std::map<std::string, int>& weight,
-    std::map<std::string, std::string>& previous) {}
+    std::map<std::string, std::string>& previous) {
+
+    unvisitVertices();
+    
+    std::priority_queue<Vertex*> pq;
+    Vertex* vertex = findVertex(startLabel);
+    // Insert into pq
+    for (auto it = vertices.find(vertex->getLabel()); it != vertices.end(); it++) {
+        std::string neighbor = it->first;
+        weight[neighbor] = getEdgeWeight(it->first, neighbor);
+        previous[neighbor] = vertex->getLabel();
+        pq.push(it->second);
+    }
+
+    // Ran out of neighbors
+    std::set<Vertex*> vertexSet;
+    vertexSet.insert(vertex);
+    while (!pq.empty()){
+        Vertex* v = pq.top();
+        
+        // V not in vertex set
+        if (vertexSet.find(v) == vertexSet.end()) {
+            for (auto it = vertices.find(v->getLabel()); it != vertices.end(); 
+                it++) {
+                // Cost from vertex to it
+                int v2ucost = getEdgeWeight(v->getLabel(), it->first);
+
+                // If there is no weight[u]
+                if (weight.find(it->first) == weight.end()) {
+                    weight[it->first] = weight[it->first] + v2ucost;
+                    previous[it->first] = v->getLabel();
+                }
+                else {
+                    if (weight[it->first] > weight[v->getLabel()]) {
+                        weight[it->first] = weight[v->getLabel()] + v2ucost;
+                        previous[it->first] = v->getLabel();
+                        pq.push(it->second);
+                    }
+                    else {
+                        continue;
+                    }
+                }
+
+            }
+        }
+    }
+
+}
 
 /** helper for depthFirstTraversal */
 void Graph::depthFirstTraversalHelper(Vertex* startVertex,
