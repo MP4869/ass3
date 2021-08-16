@@ -186,8 +186,14 @@ void testGraph2() {
 }
 
 int main() {
-    //testGraph0();
+    testGraph0();
+    weight.clear();
+    previous.clear();
     testGraph1();
-    //testGraph2();
+    weight.clear();
+    previous.clear();
+    testGraph2();
+    weight.clear();
+    previous.clear();
     return 0;
 }
