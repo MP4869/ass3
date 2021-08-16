@@ -154,7 +154,7 @@ void Graph::djikstraCostToAllVertices(
         previous[neighbor] = vertex->getLabel();
         pq.push(it->second);
     }
-    weight[vertex->getLabel()] = 0;
+    //weight[vertex->getLabel()] = 0;
 
     // Ran out of neighbors
     std::set<Vertex*> vertexSet;
