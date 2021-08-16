@@ -145,6 +145,8 @@ void Graph::djikstraCostToAllVertices(
     std::string startLabel,
     std::map<std::string, int>& weight,
     std::map<std::string, std::string>& previous) {
+    weight.clear();
+    previous.clear();
     unvisitVertices();
     auto cmp = [&](std::string a, std::string b) { return weight[a] > weight[b]; };
     std::priority_queue<std::string, std::vector<std::string>, decltype(cmp)> pq(cmp);
