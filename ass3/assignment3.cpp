@@ -25,7 +25,8 @@ template <typename T>
 string isOK(const T& got, const T& expected) {
     if (got == expected) {
         return "OK: ";
-    } else {
+    }
+    else {
         cout << "    Got   " << got << "\n expected " << expected << endl;
         cout << "Hello";
         return "ERR: ";
@@ -53,24 +54,20 @@ void graphCostDisplayPath(string vertex) {
     auto prevIt = previous.find(vertex);
     while (prevIt != previous.end()) {
         v.push_back(prevIt->second);
-        prevIt++;
+        prevIt = previous.find(prevIt->second);
     }
     // v now has the path
     // oh, avoiding the joy of subtracting from unsigned int!
     int size = static_cast<int>(v.size());
     // return if we did we not go through any other vertex
     if (size <= 1) {
-        if (size == 1)
-        {
-            graphOut << "via ["+v[0]+"] ";
-        }
         return;
     }
     // add space between entries
     graphOut << "via [";
     // all entries except the first and last one in reverse
     // v[size-1] is the starting vertex, skipping it
-    for (int i {size - 2}; i > 0; --i)
+    for (int i{ size - 2 }; i > 0; --i)
         graphOut << v[i] << " ";
     // add the second to last entry without space after it
     // last entry is the destination vertex, not needed
@@ -86,25 +83,14 @@ void graphCostDisplayPath(string vertex) {
 // getting to C has a cost of 8, we can get to C via A->B->C
 void graphCostDisplay() {
     graphOut.str("");
-    string temp;
-    for (auto it: weight) {
+    for (auto it : weight) {
         int cost = it.second;
         if (cost == INT_MAX)
             continue;
-        if (cost != 0)
-        {
-            string vertex = it.first;
-            temp = it.first;
-            graphOut << vertex << "(" << cost << ") ";
-           
-        }
-        
-       
-        
+        string vertex = it.first;
+        graphOut << vertex << "(" << cost << ") ";
+        graphCostDisplayPath(vertex);
     }
-    graphCostDisplayPath(temp);
-    weight.clear();
-    previous.clear();
 }
 
 void testGraph0() {
@@ -125,7 +111,7 @@ void testGraph0() {
     g.djikstraCostToAllVertices("A", weight, previous);
     graphCostDisplay();
     cout << isOK(graphOut.str(), "B(1) C(4) via [B] "s)
-         << "Djisktra" << endl;
+        << "Djisktra" << endl;
 }
 
 void testGraph1() {
@@ -142,16 +128,16 @@ void testGraph1() {
     graphOut.str("");
     g.breadthFirstTraversal("A", graphVisitor);
     cout << isOK(graphOut.str(), "A B H C G D E F "s) << "BFS" << endl;
-   
+
     g.djikstraCostToAllVertices("A", weight, previous);
     graphCostDisplay();
     cout << isOK(graphOut.str(),
-                 "B(1) C(2) via [B] "s +
-                 "D(3) via [B C] E(4) via [B C D] "s +
-                 "F(5) via [B C D E] " +
-                 "G(4) via [H] "s +
-                 "H(3) "s)
-         << "Djisktra" << endl;
+        "B(1) C(2) via [B] "s +
+        "D(3) via [B C] E(4) via [B C D] "s +
+        "F(5) via [B C D E] " +
+        "G(4) via [H] "s +
+        "H(3) "s)
+        << "Djisktra" << endl;
 }
 
 void testGraph2() {
@@ -164,44 +150,44 @@ void testGraph2() {
     graphOut.str("");
     g.depthFirstTraversal("A", graphVisitor);
     cout << isOK(graphOut.str(), "A B E F J C G K L D H M I N "s)
-         << "DFS from A" << endl;
+        << "DFS from A" << endl;
 
     graphOut.str("");
     g.depthFirstTraversal("O", graphVisitor);
     cout << isOK(graphOut.str(), "O P R S T U Q "s)
-         << "DFS from O" << endl;
+        << "DFS from O" << endl;
 
     graphOut.str("");
     g.breadthFirstTraversal("A", graphVisitor);
     cout << isOK(graphOut.str(), "A B C D E F G H I J K L M N "s)
-         << "BFS from A" << endl;
+        << "BFS from A" << endl;
 
     graphOut.str("");
     g.breadthFirstTraversal("D", graphVisitor);
     cout << isOK(graphOut.str(), "D H I M N "s)
-         << "BFS from D" << endl;
+        << "BFS from D" << endl;
 
     graphOut.str("");
     g.depthFirstTraversal("U", graphVisitor);
     cout << isOK(graphOut.str(), "U "s)
-         << "DFS from U" << endl;
+        << "DFS from U" << endl;
 
     graphOut.str("");
     g.breadthFirstTraversal("U", graphVisitor);
     cout << isOK(graphOut.str(), "U "s)
-         << "BFS from U" << endl;
+        << "BFS from U" << endl;
 
     g.djikstraCostToAllVertices("O", weight, previous);
     graphCostDisplay();
     cout << isOK(graphOut.str(),
-                 "P(5) Q(2) R(3) via [Q] S(6) via [Q R] " +
-                 "T(8) via [Q R S] U(9) via [Q R S] "s)
-         << "Djisktra O" << endl;
+        "P(5) Q(2) R(3) via [Q] S(6) via [Q R] " +
+        "T(8) via [Q R S] U(9) via [Q R S] "s)
+        << "Djisktra O" << endl;
 }
 
 int main() {
-    testGraph0();
+    //testGraph0();
     testGraph1();
-    testGraph2();
+    //testGraph2();
     return 0;
 }

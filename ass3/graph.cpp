@@ -13,19 +13,22 @@
  */
 
 
-////////////////////////////////////////////////////////////////////////////////
-// This is 80 characters - Keep all lines under 80 characters                 //
-////////////////////////////////////////////////////////////////////////////////
+ ////////////////////////////////////////////////////////////////////////////////
+ // This is 80 characters - Keep all lines under 80 characters                 //
+ ////////////////////////////////////////////////////////////////////////////////
 
 
-/** constructor, empty graph */
-Graph::Graph() {}
+ /** constructor, empty graph */
+Graph::Graph() {
+    numberOfEdges = 0;
+    numberOfVertices = 0;
+}
 
 /** destructor, delete all vertices and edges
     only vertices stored in map
     no pointers to edges created by graph */
-Graph::~Graph() { 
-    
+Graph::~Graph() {
+
     std::map<std::string, Vertex*>::iterator it;
     for (it = vertices.begin(); it != vertices.end(); it++)
     {
@@ -49,8 +52,8 @@ bool Graph::add(std::string start, std::string end, int edgeWeight) {
     std::cout << start + " " + end + " " + std::to_string(edgeWeight) <<
         std::endl;
     auto it = vertices.find(start);
-    
-    if (it == vertices.end() ||it->second->connect(end, edgeWeight))
+
+    if (it == vertices.end() || it->second->connect(end, edgeWeight))
     {
         if (vertices.count(end) < 1)
         {
@@ -71,15 +74,16 @@ bool Graph::add(std::string start, std::string end, int edgeWeight) {
     }
     return false;
 }
-    
+
 
 
 /** return weight of the edge between start and end
     returns INT_MAX if not connected or vertices don't exist */
-int Graph::getEdgeWeight(std::string start, std::string end) const { 
-    
+int Graph::getEdgeWeight(std::string start, std::string end) const {
+
     auto it = vertices.find(start);
-    return it->second->getEdgeWeight(end); }
+    return it->second->getEdgeWeight(end);
+}
 
 /** read edges from file
     the first line of the file is an integer, indicating number of edges
@@ -101,10 +105,10 @@ void Graph::readFile(std::string filename) {
 
         // Grab start vertex, end vertex, weight of the edge
         infile >> start >> end >> edgeWeight;
-     
+
         add(start, end, edgeWeight);
-        
-     
+
+
         if (infile.eof()) break;
     }
 }
@@ -112,11 +116,10 @@ void Graph::readFile(std::string filename) {
 /** depth-first traversal starting from startLabel
     call the function visit on each vertex label */
 void Graph::depthFirstTraversal(std::string startLabel,
-                                void visit(const std::string&)) {
+    void visit(const std::string&)) {
     unvisitVertices();
     Vertex* temp = vertices.at(startLabel);
     depthFirstTraversalHelper(temp, visit);
-    unvisitVertices();
 }
 
 /** breadth-first traversal starting from startLabel
@@ -125,8 +128,7 @@ void Graph::breadthFirstTraversal(std::string startLabel,
     void visit(const std::string&)) {
     unvisitVertices();
     Vertex* temp = vertices.at(startLabel);
-    breadthFirstTraversalHelper(temp,  visit);
-    unvisitVertices();
+    breadthFirstTraversalHelper(temp, visit);
 }
 
 /** find the lowest cost from startLabel to all vertices that can be reached
@@ -139,51 +141,61 @@ void Graph::breadthFirstTraversal(std::string startLabel,
     cpplint gives warning to use pointer instead of a non-const map
     which I am ignoring for readability */
 void Graph::djikstraCostToAllVertices(
+    
     std::string startLabel,
     std::map<std::string, int>& weight,
     std::map<std::string, std::string>& previous) {
-
     unvisitVertices();
-    
-    std::priority_queue<Vertex*> pq;
-    Vertex* vertex = findVertex(startLabel);
-    // Insert into pq
-    for (auto it = vertices.find(vertex->getLabel()); it != vertices.end(); it++) {
-        std::string neighbor = it->first;
-        weight[neighbor] = getEdgeWeight(neighbor, it->first);
-        previous[neighbor] = vertex->getLabel();
-        pq.push(it->second);
-    }
-    //weight[vertex->getLabel()] = 0;
+    auto cmp = [&](std::string a, std::string b) { return weight[a] > weight[b]; };
+    std::priority_queue<std::string, std::vector<std::string>, decltype(cmp)> pq(cmp);
 
-    // Ran out of neighbors
-    std::set<Vertex*> vertexSet;
-    vertexSet.insert(vertex);
-    while (!pq.empty()){
-        Vertex* v = pq.top();
-        pq.pop();
-        // V not in vertex set
-        if (vertexSet.find(v) == vertexSet.end()) {
-            for (auto it = vertices.find(vertex->getLabel()); it != vertices.end(); 
-                it++) {
-                // Cost from vertex to it
-                int v2ucost = getEdgeWeight(it->first,v->getLabel());
-                if (v2ucost > 0)
-                {
-                    // If there is no weight[u]
-                    if (weight[v->getLabel()] < 0) {
-                        weight[v->getLabel()] = weight[it->first] + v2ucost;
-                        previous[v->getLabel()] = it->first;
+    Vertex* temp = findVertex(startLabel);
+    std::string s = temp->getNextNeighbor();
+    while (temp->getLabel() != s) {
+
+        weight[s] = getEdgeWeight(temp->getLabel(), s);
+        previous[s] = startLabel;
+        pq.push(s);
+        s = temp->getNextNeighbor();
+    }
+
+    std::set<std::string> vertexSet;
+    vertexSet.insert(startLabel);
+    while (!pq.empty()) {
+       
+      
+            Vertex* v = findVertex(pq.top());
+            pq.pop();
+            if (v->getLabel() == startLabel) continue;
+
+        // Vertex not found in the vertexSet
+        if (vertexSet.find(v->getLabel()) == vertexSet.end()) {
+            for (auto it = vertices.find(v->getNextNeighbor());
+                it != vertices.end(); it++) {
+
+                // Neighbor label
+                std::string u = it->first;
+                // Weight from vertex to neighbor
+                int edgeWeight = getEdgeWeight(v->getLabel(), u);
+
+                // If it's the last node, edgeweight will be -1 
+                if (edgeWeight < 0) continue;
+                if (u == startLabel) continue;
+                //weight[neighbor] couldn't be found
+                if (weight.find(u) == weight.end()) {
+                    weight[u] = weight[v->getLabel()] + edgeWeight;
+                    previous[u] = v->getLabel();
+                    pq.push(u);
+                }
+                else {
+                    if (weight[u] > weight[v->getLabel()] + edgeWeight) {
+
+                        weight[u] = weight[v->getLabel()] + edgeWeight;
+                        previous[u] = v->getLabel();
+                        pq.push(u);
                     }
                     else {
-                        if (weight[it->first] < weight[v->getLabel()]) {
-                            weight[v->getLabel()]= weight[it->first] + v2ucost;
-                            previous[v->getLabel()] = it->first;
-                            pq.push(it->second);
-                        }
-                        else {
-                            continue;
-                        }
+                        continue;
                     }
                 }
 
@@ -195,7 +207,7 @@ void Graph::djikstraCostToAllVertices(
 
 /** helper for depthFirstTraversal */
 void Graph::depthFirstTraversalHelper(Vertex* startVertex,
-                                      void visit(const std::string&)) {
+    void visit(const std::string&)) {
     startVertex->visit();
     visit(startVertex->getLabel());
     // Recur for all the vertices adjacent
@@ -211,40 +223,40 @@ void Graph::depthFirstTraversalHelper(Vertex* startVertex,
         if (!temp->isVisited())
         {
             depthFirstTraversalHelper(temp, visit);
-        }  
+        }
     }
-  
+
 }
 
 /** helper for breadthFirstTraversal */
-void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
-                                        void visit(const std::string&)) {
+void Graph::breadthFirstTraversalHelper(Vertex* startVertex,
+    void visit(const std::string&)) {
     std::list<Vertex*> queue;
     // Mark the current node as visited and enqueue it
     startVertex->visit();
     visit(startVertex->getLabel());
     queue.push_back(startVertex);
 
- 
+
 
     while (!queue.empty())
     {
         // Dequeue a vertex from queue and print it
-        Vertex*temp = queue.front();
+        Vertex* temp = queue.front();
         std::cout << temp << " ";
         queue.pop_front();
 
         // Get all adjacent vertices of the dequeued
         // vertex s. If a adjacent has not been visited,
         // then mark it visited and enqueue it
-      while(true)
+        while (true)
         {
-          std::string insert = temp->getNextNeighbor();
-          if (insert.compare(temp->getLabel())==0)
-          {
-              break;
-          }
-          Vertex* temp = vertices.at(insert);
+            std::string insert = temp->getNextNeighbor();
+            if (insert.compare(temp->getLabel()) == 0)
+            {
+                break;
+            }
+            Vertex* temp = vertices.at(insert);
             if (!temp->isVisited())
             {
                 temp->visit();
@@ -259,13 +271,11 @@ void Graph::breadthFirstTraversalHelper(Vertex*startVertex,
 void Graph::unvisitVertices() {
 
     //.second refers to the vertex pointer
-    for (const auto& item: vertices) {
+    for (const auto& item : vertices) {
         item.second->unvisit();
         item.second->setIterations();
     }
 }
-
-
 
 /** find a vertex, if it does not exist return nullptr */
 Vertex* Graph::findVertex(const std::string& vertexLabel) const {
@@ -281,7 +291,7 @@ Vertex* Graph::findVertex(const std::string& vertexLabel) const {
 }
 
 /** find a vertex, if it does not exist create it and return it */
-Vertex* Graph::findOrCreateVertex(const std::string& vertexLabel) { 
+Vertex* Graph::findOrCreateVertex(const std::string& vertexLabel) {
     auto it = vertices.find(vertexLabel);
     //abc
 
