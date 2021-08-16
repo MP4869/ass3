@@ -53,13 +53,17 @@ void graphCostDisplayPath(string vertex) {
     auto prevIt = previous.find(vertex);
     while (prevIt != previous.end()) {
         v.push_back(prevIt->second);
-        prevIt = previous.find(prevIt->second);
+        prevIt++;
     }
     // v now has the path
     // oh, avoiding the joy of subtracting from unsigned int!
     int size = static_cast<int>(v.size());
     // return if we did we not go through any other vertex
     if (size <= 1) {
+        if (size == 1)
+        {
+            graphOut << "via ["+v[0]+"] ";
+        }
         return;
     }
     // add space between entries
@@ -82,14 +86,25 @@ void graphCostDisplayPath(string vertex) {
 // getting to C has a cost of 8, we can get to C via A->B->C
 void graphCostDisplay() {
     graphOut.str("");
+    string temp;
     for (auto it: weight) {
         int cost = it.second;
         if (cost == INT_MAX)
             continue;
-        string vertex = it.first;
-        graphOut << vertex << "(" << cost << ") ";
-        graphCostDisplayPath(vertex);
+        if (cost != 0)
+        {
+            string vertex = it.first;
+            temp = it.first;
+            graphOut << vertex << "(" << cost << ") ";
+           
+        }
+        
+       
+        
     }
+    graphCostDisplayPath(temp);
+    weight.clear();
+    previous.clear();
 }
 
 void testGraph0() {
@@ -127,7 +142,7 @@ void testGraph1() {
     graphOut.str("");
     g.breadthFirstTraversal("A", graphVisitor);
     cout << isOK(graphOut.str(), "A B H C G D E F "s) << "BFS" << endl;
-
+   
     g.djikstraCostToAllVertices("A", weight, previous);
     graphCostDisplay();
     cout << isOK(graphOut.str(),

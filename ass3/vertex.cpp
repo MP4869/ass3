@@ -79,7 +79,7 @@ bool Vertex::disconnect(const std::string& endVertex) {
 int Vertex::getEdgeWeight(const std::string& endVertex) const { 
 
     // map.find iterates over the key in the adjacency list
-    auto it = adjacencyList.find(vertexLabel);
+    auto it = adjacencyList.find(endVertex);
     // Found the vertex
     if (it != adjacencyList.end()) {
 

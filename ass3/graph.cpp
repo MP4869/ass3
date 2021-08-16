@@ -150,37 +150,40 @@ void Graph::djikstraCostToAllVertices(
     // Insert into pq
     for (auto it = vertices.find(vertex->getLabel()); it != vertices.end(); it++) {
         std::string neighbor = it->first;
-        weight[neighbor] = getEdgeWeight(it->first, neighbor);
+        weight[neighbor] = getEdgeWeight(neighbor, it->first);
         previous[neighbor] = vertex->getLabel();
         pq.push(it->second);
     }
+    weight[vertex->getLabel()] = 0;
 
     // Ran out of neighbors
     std::set<Vertex*> vertexSet;
     vertexSet.insert(vertex);
     while (!pq.empty()){
         Vertex* v = pq.top();
-        
+        pq.pop();
         // V not in vertex set
         if (vertexSet.find(v) == vertexSet.end()) {
-            for (auto it = vertices.find(v->getLabel()); it != vertices.end(); 
+            for (auto it = vertices.find(vertex->getLabel()); it != vertices.end(); 
                 it++) {
                 // Cost from vertex to it
-                int v2ucost = getEdgeWeight(v->getLabel(), it->first);
-
-                // If there is no weight[u]
-                if (weight.find(it->first) == weight.end()) {
-                    weight[it->first] = weight[it->first] + v2ucost;
-                    previous[it->first] = v->getLabel();
-                }
-                else {
-                    if (weight[it->first] > weight[v->getLabel()]) {
-                        weight[it->first] = weight[v->getLabel()] + v2ucost;
-                        previous[it->first] = v->getLabel();
-                        pq.push(it->second);
+                int v2ucost = getEdgeWeight(it->first,v->getLabel());
+                if (v2ucost > 0)
+                {
+                    // If there is no weight[u]
+                    if (weight[v->getLabel()] < 0) {
+                        weight[v->getLabel()] = weight[it->first] + v2ucost;
+                        previous[v->getLabel()] = it->first;
                     }
                     else {
-                        continue;
+                        if (weight[it->first] < weight[v->getLabel()]) {
+                            weight[v->getLabel()]= weight[it->first] + v2ucost;
+                            previous[v->getLabel()] = it->first;
+                            pq.push(it->second);
+                        }
+                        else {
+                            continue;
+                        }
                     }
                 }
 
